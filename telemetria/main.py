@@ -7,6 +7,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QFileDialog, QIn
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
 
+from datetime import datetime
+
 import pyqtgraph as pg
 
 import time
@@ -25,6 +27,9 @@ class Gui(QMainWindow, gui_class):
 
         self.n = 0
 
+        self.puerto = ""
+        self.baudrate = 9600
+
         self.acel_x1_all = []
         self.acel_y1_all = []
         self.acel_z1_all = []
@@ -34,17 +39,28 @@ class Gui(QMainWindow, gui_class):
         self.acel_z2_all = []
         self.velocidad_all = []
 
-        self.pg_window_acel = pg.GraphicsWindow()
+        self.pg_window_acel1 = pg.GraphicsWindow()
         self.pg_window_acel2 = pg.GraphicsWindow()
 
         self.pg_window_vel = pg.GraphicsWindow()
 
-        self.pg_plot_acel_x = self.pg_window_acel.addPlot()
-        self.pg_plot_acel_y = self.pg_window_acel2.addPlot()
 
-        self.pg_plot_vel = self.pg_window_vel.addPlot()
+        self.pg_gen_acel1 = self.pg_window_acel1.addPlot()
+        self.pg_gen_acel1.addLegend()
+        self.pg_plot_acel1_x = self.pg_gen_acel1.plot(name="eje x")
+        self.pg_plot_acel1_y = self.pg_gen_acel1.plot(name="eje y")
+        self.pg_plot_acel1_z = self.pg_gen_acel1.plot(name="eje z")
 
-        self.qt_aceleracion_layout.addWidget(self.pg_window_acel)
+        self.pg_gen_acel2 = self.pg_window_acel2.addPlot()
+        self.pg_gen_acel2.addLegend()
+        self.pg_plot_acel2_x = self.pg_gen_acel2.plot(name="eje x")
+        self.pg_plot_acel2_y = self.pg_gen_acel2.plot(name="eje y")
+        self.pg_plot_acel2_z = self.pg_gen_acel2.plot(name="eje z")
+
+        self.pg_gen_vel = self.pg_window_vel.addPlot()
+        self.pg_plot_vel = self.pg_gen_vel.plot()
+
+        self.qt_aceleracion_layout.addWidget(self.pg_window_acel1)
         self.qt_velocidad_layout.addWidget(self.pg_window_vel)
         self.qt_aceleracion2_layout.addWidget(self.pg_window_acel2)
 
@@ -71,12 +87,10 @@ class Gui(QMainWindow, gui_class):
         self.qt_inclinacion_layout.addWidget(graphicsview)
 
 
-
-
     
     def read_data(self, buffer):
         
-        d = -100
+        d = -1000
 
         l_buffer = len(buffer.split("*"))
 
@@ -113,99 +127,63 @@ class Gui(QMainWindow, gui_class):
         
         
 
-        self.pg_plot_acel_x.clear()
-        self.pg_plot_acel_y.clear()
+        self.pg_plot_acel1_x.clear()
+        self.pg_plot_acel1_y.clear()
         self.pg_plot_vel.clear()
 
-        self.pg_plot_acel_x.addLegend()
-        self.pg_plot_acel_x.plot(
-            range(self.n)[d:],
+        self.pg_plot_acel1_x.setData(
             self.acel_x1_all[d:],
-            #symbol="o",
-            style=QtCore.Qt.DotLine,
-            # pen=pg.mkPen(color=(255, 100, 100)),
             pen=(1, 3),
-            antialias = True,
-            name="eje x"
+            antialias=True,
         )
-        
-        
-        self.pg_plot_acel_x.plot(
-            range(self.n)[d:],
+
+        self.pg_plot_acel1_y.setData(
             self.acel_y1_all[d:],
-            #symbol="o",
-            style=QtCore.Qt.DotLine,
-            # pen=pg.mkPen(color=(255, 100, 100)),
             pen=(2, 3),
-            antialias = True,
-            name="eje y"
+            antialias=True,
         )
-        
-        self.pg_plot_acel_x.plot(
-            range(self.n)[d:],
+
+        self.pg_plot_acel1_z.setData(
             self.acel_z1_all[d:],
-            #symbol="o",
-            style=QtCore.Qt.DotLine,
-            # pen=pg.mkPen(color=(255, 100, 100)),
             pen=(3, 3),
-            antialias = True,
-            name="eje z"
+            antialias=True,
         )
 
-
-
-        self.pg_plot_acel_y.addLegend()
-        self.pg_plot_acel_y.plot(
-            range(self.n)[d:],
+        self.pg_plot_acel2_x.setData(
             self.acel_x2_all[d:],
-            #symbol="o",
-            style=QtCore.Qt.DotLine,
-            # pen=pg.mkPen(color=(255, 100, 100)),
             pen=(1, 3),
-            antialias = True,
-            name="eje x"
-        )
-        
-        
-        self.pg_plot_acel_y.plot(
-            range(self.n)[d:],
-            self.acel_y2_all[d:],
-            #symbol="o",
-            style=QtCore.Qt.DotLine,
-            # pen=pg.mkPen(color=(255, 100, 100)),
-            pen=(2, 3),
-            antialias = True,
-            name="eje y"
-        )
-        
-        self.pg_plot_acel_y.plot(
-            range(self.n)[d:],
-            self.acel_z2_all[d:],
-            #symbol="o",
-            style=QtCore.Qt.DotLine,
-            # pen=pg.mkPen(color=(255, 100, 100)),
-            pen=(3, 3),
-            antialias = True,
-            name="eje z"
+            antialias=True,
         )
 
-        self.pg_plot_vel.plot(
-           range(self.n)[d:],
-           self.velocidad_all[d:],
-           #symbol="o",
-           style=QtCore.Qt.DotLine,
-           pen=pg.mkPen(color=(255, 100, 100)),
-           antialias = True
-       )
+        self.pg_plot_acel2_y.setData(
+            self.acel_y2_all[d:],
+            pen=(2, 3),
+            antialias=True,
+        )
+
+        self.pg_plot_acel2_z.setData(
+            self.acel_z2_all[d:],
+            pen=(3, 3),
+            antialias=True,
+        )
+
+        self.pg_plot_vel.setData(
+            self.velocidad_all[d:],
+            antialias=True,
+            pen=pg.mkPen(color=(255, 100, 100))
+        )
 
         self.qt_velocidad_lcd.display(v)
+        self.statusBar().showMessage("{0} datos".format(self.n))
+
     
     def conectar(self):
         puerto = str(self.qt_puerto_lineedit.text())
+        baudrate = str(self.qt_velocidad_lineedit.text())
         
-        if puerto:
-            print(puerto)
-            self.st = SerialThread(puerto)
+        if puerto and baudrate.isdigit():
+            print("conectando a: {0}:{1}".format(puerto, baudrate))
+            self.st = SerialThread(puerto, self)
             self.st.signal.connect(self.read_data)
             self.st.start()
     
@@ -225,19 +203,30 @@ class Gui(QMainWindow, gui_class):
         self.acel_z2_all = []
         self.velocidad_all = []
         self.n = 0
-        self.pg_plot_acel_x.clear()
-        self.pg_plot_acel_y.clear()
+
+        self.pg_plot_acel1_x.clear()
+        self.pg_plot_acel1_y.clear()
+        self.pg_plot_acel1_z.clear()
+
+        self.pg_plot_acel2_x.clear()
+        self.pg_plot_acel2_y.clear()
+        self.pg_plot_acel2_z.clear()
+
         self.pg_plot_vel.clear()
+
+        self.qt_velocidad_lcd.display(0)
+        self.proxy.setRotation(0)
 
 
 class SerialThread(QThread):
     signal = pyqtSignal(str)
 
-    def __init__(self, puerto):
+    def __init__(self, puerto, padre):
         QThread.__init__(self)
         self.puerto = puerto
         self.velocidad = 9600
         self.ser = None
+        self.self = padre
 
     def connect(self):
         self.ser = serial.Serial(
@@ -247,25 +236,26 @@ class SerialThread(QThread):
     
     def guardar(self, buffer):
         with open("data.txt", "a+") as f:
-            f.write(buffer)
+            f.write(buffer.replace("*", ","))
 
     def run(self):
         self.connect()
         buffer = ""
+        self.guardar(str(datetime.today()))
+        self.guardar("\r\n")
         while True:
             try:
                 byte = self.ser.read(1).decode("utf8")
                 if byte == "\n":
                     self.signal.emit(buffer)
                     self.guardar(buffer)
-                    time.sleep(0.1)
-                    print(buffer)
                     buffer = ""
                 else:
                     buffer += byte
             except Exception as e:
                 print(e)
                 buffer = ""
+
 
 app = QApplication(sys.argv)
 corel = Gui(None)

@@ -48,31 +48,24 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout_7">
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="groupBox_5">
-         <property name="title">
-          <string>Lanta 2</string>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>10</height>
+          </size>
          </property>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="0">
-           <widget class="QLCDNumber" name="lcdNumber_3"/>
-          </item>
-         </layout>
+         <property name="text">
+          <string>Velocidad:</string>
+         </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLineEdit" name="qt_puerto_lineedit"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QGroupBox" name="groupBox_6">
-         <property name="title">
-          <string>Llanta 3</string>
+       <item row="5" column="0">
+        <widget class="QLineEdit" name="qt_velocidad_lineedit">
+         <property name="text">
+          <string>9600</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <item row="0" column="0">
-           <widget class="QLCDNumber" name="lcdNumber_4"/>
-          </item>
-         </layout>
         </widget>
        </item>
        <item row="1" column="0">
@@ -93,7 +86,42 @@
          </layout>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Velocidad</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QLCDNumber" name="qt_velocidad_lcd"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Puerto:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLineEdit" name="qt_puerto_lineedit"/>
+       </item>
        <item row="6" column="0">
+        <widget class="QPushButton" name="qt_conectar_button">
+         <property name="text">
+          <string>Conectar</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QPushButton" name="qt_limpiar_button">
@@ -117,25 +145,6 @@
           </widget>
          </item>
         </layout>
-       </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Velocidad</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QLCDNumber" name="qt_velocidad_lcd"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QPushButton" name="qt_conectar_button">
-         <property name="text">
-          <string>Conectar</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -172,18 +181,16 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1005</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>qt_puerto_lineedit</tabstop>
+  <tabstop>qt_velocidad_lineedit</tabstop>
+  <tabstop>qt_conectar_button</tabstop>
+  <tabstop>qt_parar_button</tabstop>
+  <tabstop>qt_limpiar_button</tabstop>
+  <tabstop>qt_guardar_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
