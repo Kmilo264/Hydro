@@ -19,6 +19,8 @@ pg.setConfigOption('foreground', 'k')
 
 gui_class = uic.loadUiType("gui/main.ui")[0]
 
+DATOS = 8
+
 class NewList():
 
     def __init__(self, max):
@@ -107,7 +109,7 @@ class Gui(QMainWindow, gui_class):
     def read_data(self, buffer):
         l_buffer = len(buffer.split("*"))
 
-        if not l_buffer >= 8:
+        if not l_buffer == DATOS:
             return
         try:
             splitted = buffer.split("*")
@@ -189,8 +191,9 @@ class Gui(QMainWindow, gui_class):
         baudrate = str(self.qt_velocidad_lineedit.text())
         
         if puerto and baudrate.isdigit():
+            baudrate = int(baudrate)
             print("conectando a: {0}:{1}".format(puerto, baudrate))
-            self.st = SerialThread(puerto, self)
+            self.st = SerialThread(puerto, baudrate)
             self.st.signal.connect(self.read_data)
             self.st.start()
     
@@ -230,12 +233,11 @@ class Gui(QMainWindow, gui_class):
 class SerialThread(QThread):
     signal = pyqtSignal(str)
 
-    def __init__(self, puerto, padre):
+    def __init__(self, puerto, baudrate):
         QThread.__init__(self)
         self.puerto = puerto
-        self.velocidad = 9600
+        self.velocidad = baudrate
         self.ser = None
-        self.self = padre
 
     def connect(self):
         self.ser = serial.Serial(
@@ -246,18 +248,24 @@ class SerialThread(QThread):
     def guardar(self, buffer):
         with open("data.txt", "a+") as f:
             f.write(buffer.replace("*", ","))
+            f.write("\r\n")
 
     def run(self):
         self.connect()
         buffer = ""
+        self.guardar("")
         self.guardar(str(datetime.today()))
-        self.guardar("\r\n")
+        self.guardar("")
         while True:
             try:
                 byte = self.ser.read(1).decode("utf8")
                 if byte == "\n":
+                    buffer = buffer.strip()
                     self.signal.emit(buffer)
-                    self.guardar(buffer)
+                    if len(buffer.split("*")) == DATOS:
+                        self.guardar(buffer)
+                    else:
+                        print("No suficientes datos")
                     buffer = ""
                 else:
                     buffer += byte
