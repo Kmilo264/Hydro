@@ -32,6 +32,7 @@ class Gui(QMainWindow, gui_class):
         self.acel_x2_all = []
         self.acel_y2_all = []
         self.acel_z2_all = []
+        self.velocidad_all = []
 
         self.pg_window_acel = pg.GraphicsWindow()
         self.pg_window_vel = pg.GraphicsWindow()
@@ -56,7 +57,7 @@ class Gui(QMainWindow, gui_class):
 
         l_buffer = len(buffer.split("*"))
 
-        if not l_buffer >= 6:
+        if not l_buffer >= 7:
             return
         try:
             splitted = buffer.split("*")
@@ -67,6 +68,8 @@ class Gui(QMainWindow, gui_class):
             x2 = float(splitted[3])
             y2 = float(splitted[4])
             z2 = float(splitted[5])
+
+            v = float(splitted[6])
         except:
             print("Error convirtiendo a numero")
             return
@@ -83,6 +86,7 @@ class Gui(QMainWindow, gui_class):
         self.acel_x2_all.append(x2)
         self.acel_y2_all.append(y2)
         self.acel_z2_all.append(z2)
+        self.velocidad_all.append(v)
         
         
 
@@ -161,15 +165,15 @@ class Gui(QMainWindow, gui_class):
             antialias = True,
             name="eje z"
         )
-#
-#        self.pg_plot_vel.plot(
-#            self.acel_x_all[d:],
-#            self.acel_y_all[d:],
-#            #symbol="o",
-#            style=QtCore.Qt.DotLine,
-#            pen=pg.mkPen(color=(255, 100, 100)),
-#            antialias = True
-#        )
+
+        self.pg_plot_vel.plot(
+           range(self.n)[d:],
+           self.velocidad_all[d:],
+           #symbol="o",
+           style=QtCore.Qt.DotLine,
+           pen=pg.mkPen(color=(255, 100, 100)),
+           antialias = True
+       )
     
     def conectar(self):
         puerto = str(self.qt_puerto_lineedit.text())
@@ -188,7 +192,18 @@ class Gui(QMainWindow, gui_class):
         self.st.terminate()
     
     def limpiar(self):
-        print("limpiar")
+        self.acel_x1_all = []
+        self.acel_x2_all = []
+        self.acel_y1_all = []
+        self.acel_y2_all = []
+        self.acel_z1_all = []
+        self.acel_z2_all = []
+        self.velocidad_all = []
+        self.n = 0
+        self.pg_plot_acel_x.clear()
+        self.pg_plot_acel_y.clear()
+        self.pg_plot_vel.clear()
+
 
 class SerialThread(QThread):
     signal = pyqtSignal(str)
@@ -218,7 +233,7 @@ class SerialThread(QThread):
                 if byte == "\n":
                     self.signal.emit(buffer)
                     self.guardar(buffer)
-                    time.sleep(0.1)
+                    time.sleep(1)
                     print(buffer)
                     buffer = ""
                 else:
