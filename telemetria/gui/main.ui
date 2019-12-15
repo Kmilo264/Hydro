@@ -77,12 +77,18 @@
        </item>
        <item row="1" column="0">
         <widget class="QGroupBox" name="groupBox_4">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>200</height>
+          </size>
+         </property>
          <property name="title">
-          <string>Llanta 1</string>
+          <string>Inclinación</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <item row="0" column="0">
-           <widget class="QLCDNumber" name="lcdNumber_2"/>
+           <layout class="QVBoxLayout" name="qt_inclinacion_layout"/>
           </item>
          </layout>
         </widget>

@@ -53,6 +53,26 @@ class Gui(QMainWindow, gui_class):
         self.qt_guardar_button.clicked.connect(self.guardar)
         self.qt_limpiar_button.clicked.connect(self.limpiar)
 
+        # Inclinacion
+        self.label = QtWidgets.QLabel(
+            "----------------",
+            alignment=QtCore.Qt.AlignCenter
+            )
+        
+        graphicsview = QtWidgets.QGraphicsView()
+        scene = QtWidgets.QGraphicsScene(graphicsview)
+        graphicsview.setScene(scene)
+
+        self.proxy = QtWidgets.QGraphicsProxyWidget()
+        self.proxy.setWidget(self.label)
+        self.proxy.setTransformOriginPoint(self.proxy.boundingRect().center())
+        scene.addItem(self.proxy)
+
+        self.qt_inclinacion_layout.addWidget(graphicsview)
+
+
+
+
     
     def read_data(self, buffer):
         
@@ -60,7 +80,7 @@ class Gui(QMainWindow, gui_class):
 
         l_buffer = len(buffer.split("*"))
 
-        if not l_buffer >= 7:
+        if not l_buffer >= 8:
             return
         try:
             splitted = buffer.split("*")
@@ -72,7 +92,10 @@ class Gui(QMainWindow, gui_class):
             y2 = float(splitted[4])
             z2 = float(splitted[5])
 
-            v = float(splitted[6])
+            theta = float(splitted[6])
+            v = float(splitted[7])
+            
+            self.proxy.setRotation(theta)
         except:
             print("Error convirtiendo a numero")
             return
