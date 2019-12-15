@@ -52,7 +52,7 @@ class Gui(QMainWindow, gui_class):
     
     def read_data(self, buffer):
         
-        d = -1000
+        d = -100
 
         l_buffer = len(buffer.split("*"))
 
@@ -92,7 +92,7 @@ class Gui(QMainWindow, gui_class):
 
         self.pg_plot_acel_x.addLegend()
         self.pg_plot_acel_x.plot(
-            range(self.n),
+            range(self.n)[d:],
             self.acel_x1_all[d:],
             #symbol="o",
             style=QtCore.Qt.DotLine,
@@ -104,7 +104,7 @@ class Gui(QMainWindow, gui_class):
         
         
         self.pg_plot_acel_x.plot(
-            range(self.n),
+            range(self.n)[d:],
             self.acel_y1_all[d:],
             #symbol="o",
             style=QtCore.Qt.DotLine,
@@ -115,7 +115,7 @@ class Gui(QMainWindow, gui_class):
         )
         
         self.pg_plot_acel_x.plot(
-            range(self.n),
+            range(self.n)[d:],
             self.acel_z1_all[d:],
             #symbol="o",
             style=QtCore.Qt.DotLine,
@@ -129,7 +129,7 @@ class Gui(QMainWindow, gui_class):
 
         self.pg_plot_acel_y.addLegend()
         self.pg_plot_acel_y.plot(
-            range(self.n),
+            range(self.n)[d:],
             self.acel_x2_all[d:],
             #symbol="o",
             style=QtCore.Qt.DotLine,
@@ -141,7 +141,7 @@ class Gui(QMainWindow, gui_class):
         
         
         self.pg_plot_acel_y.plot(
-            range(self.n),
+            range(self.n)[d:],
             self.acel_y2_all[d:],
             #symbol="o",
             style=QtCore.Qt.DotLine,
@@ -152,7 +152,7 @@ class Gui(QMainWindow, gui_class):
         )
         
         self.pg_plot_acel_y.plot(
-            range(self.n),
+            range(self.n)[d:],
             self.acel_z2_all[d:],
             #symbol="o",
             style=QtCore.Qt.DotLine,
