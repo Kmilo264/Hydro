@@ -35,15 +35,18 @@ class Gui(QMainWindow, gui_class):
         self.velocidad_all = []
 
         self.pg_window_acel = pg.GraphicsWindow()
+        self.pg_window_acel2 = pg.GraphicsWindow()
+
         self.pg_window_vel = pg.GraphicsWindow()
 
         self.pg_plot_acel_x = self.pg_window_acel.addPlot()
-        self.pg_plot_acel_y = self.pg_window_acel.addPlot()
+        self.pg_plot_acel_y = self.pg_window_acel2.addPlot()
 
         self.pg_plot_vel = self.pg_window_vel.addPlot()
 
         self.qt_aceleracion_layout.addWidget(self.pg_window_acel)
         self.qt_velocidad_layout.addWidget(self.pg_window_vel)
+        self.qt_aceleracion2_layout.addWidget(self.pg_window_acel2)
 
         self.qt_conectar_button.clicked.connect(self.conectar)
         self.qt_parar_button.clicked.connect(self.parar)
@@ -75,9 +78,6 @@ class Gui(QMainWindow, gui_class):
             return
         x = self.n
         self.n += 1
-
-        print("ploting", x1, y1, d)
-
 
         self.acel_x1_all.append(x1)
         self.acel_z1_all.append(z1)
@@ -174,6 +174,8 @@ class Gui(QMainWindow, gui_class):
            pen=pg.mkPen(color=(255, 100, 100)),
            antialias = True
        )
+
+        self.qt_velocidad_lcd.display(v)
     
     def conectar(self):
         puerto = str(self.qt_puerto_lineedit.text())
@@ -233,13 +235,14 @@ class SerialThread(QThread):
                 if byte == "\n":
                     self.signal.emit(buffer)
                     self.guardar(buffer)
-                    time.sleep(1)
+                    time.sleep(0.1)
                     print(buffer)
                     buffer = ""
                 else:
                     buffer += byte
-            except:
-                pass
+            except Exception as e:
+                print(e)
+                buffer = ""
 
 app = QApplication(sys.argv)
 corel = Gui(None)
