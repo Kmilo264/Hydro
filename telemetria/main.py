@@ -19,6 +19,18 @@ pg.setConfigOption('foreground', 'k')
 
 gui_class = uic.loadUiType("gui/main.ui")[0]
 
+class NewList():
+
+    def __init__(self, max):
+        self.l = []
+        self.max = max
+
+    def append(self, element):
+        if len(self.l) == self.max:
+            self.l.pop(0)
+        self.l.append(element)
+
+
 class Gui(QMainWindow, gui_class):
     
     def __init__(self, parent=None):
@@ -30,14 +42,19 @@ class Gui(QMainWindow, gui_class):
         self.puerto = ""
         self.baudrate = 9600
 
-        self.acel_x1_all = []
-        self.acel_y1_all = []
-        self.acel_z1_all = []
+        self.cant_acel1 = 100
+        self.cant_acel2 = 100
+        self.cant_vel = 400
+
+
+        self.acel_x1_all = NewList(self.cant_acel1)
+        self.acel_y1_all = NewList(self.cant_acel1)
+        self.acel_z1_all = NewList(self.cant_acel1)
         
-        self.acel_x2_all = []
-        self.acel_y2_all = []
-        self.acel_z2_all = []
-        self.velocidad_all = []
+        self.acel_x2_all = NewList(self.cant_acel2)
+        self.acel_y2_all = NewList(self.cant_acel2)
+        self.acel_z2_all = NewList(self.cant_acel2)
+        self.velocidad_all = NewList(self.cant_vel)
 
         self.pg_window_acel1 = pg.GraphicsWindow()
         self.pg_window_acel2 = pg.GraphicsWindow()
@@ -71,7 +88,7 @@ class Gui(QMainWindow, gui_class):
 
         # Inclinacion
         self.label = QtWidgets.QLabel(
-            "----------------",
+            "<---------------->",
             alignment=QtCore.Qt.AlignCenter
             )
         
@@ -87,11 +104,7 @@ class Gui(QMainWindow, gui_class):
         self.qt_inclinacion_layout.addWidget(graphicsview)
 
 
-    
     def read_data(self, buffer):
-        
-        d = -1000
-
         l_buffer = len(buffer.split("*"))
 
         if not l_buffer >= 8:
@@ -113,7 +126,6 @@ class Gui(QMainWindow, gui_class):
         except:
             print("Error convirtiendo a numero")
             return
-        x = self.n
         self.n += 1
 
         self.acel_x1_all.append(x1)
@@ -123,52 +135,47 @@ class Gui(QMainWindow, gui_class):
         self.acel_x2_all.append(x2)
         self.acel_y2_all.append(y2)
         self.acel_z2_all.append(z2)
-        self.velocidad_all.append(v)
-        
-        
 
-        self.pg_plot_acel1_x.clear()
-        self.pg_plot_acel1_y.clear()
-        self.pg_plot_vel.clear()
+        self.velocidad_all.append(v)
 
         self.pg_plot_acel1_x.setData(
-            self.acel_x1_all[d:],
+            self.acel_x1_all.l,
             pen=(1, 3),
             antialias=True,
         )
 
         self.pg_plot_acel1_y.setData(
-            self.acel_y1_all[d:],
+            self.acel_y1_all.l,
             pen=(2, 3),
             antialias=True,
         )
 
         self.pg_plot_acel1_z.setData(
-            self.acel_z1_all[d:],
+            self.acel_z1_all.l,
             pen=(3, 3),
             antialias=True,
         )
 
         self.pg_plot_acel2_x.setData(
-            self.acel_x2_all[d:],
+            self.acel_x2_all.l,
             pen=(1, 3),
             antialias=True,
         )
 
         self.pg_plot_acel2_y.setData(
-            self.acel_y2_all[d:],
+            self.acel_y2_all.l,
             pen=(2, 3),
             antialias=True,
         )
 
         self.pg_plot_acel2_z.setData(
-            self.acel_z2_all[d:],
+            self.acel_z2_all.l,
             pen=(3, 3),
             antialias=True,
         )
 
         self.pg_plot_vel.setData(
-            self.velocidad_all[d:],
+            self.velocidad_all.l,
             antialias=True,
             pen=pg.mkPen(color=(255, 100, 100))
         )
@@ -195,13 +202,15 @@ class Gui(QMainWindow, gui_class):
         self.st.terminate()
     
     def limpiar(self):
-        self.acel_x1_all = []
-        self.acel_x2_all = []
-        self.acel_y1_all = []
-        self.acel_y2_all = []
-        self.acel_z1_all = []
-        self.acel_z2_all = []
-        self.velocidad_all = []
+
+        self.acel_x1_all = NewList(self.cant_acel1)
+        self.acel_y1_all = NewList(self.cant_acel1)
+        self.acel_z1_all = NewList(self.cant_acel1)
+        
+        self.acel_x2_all = NewList(self.cant_acel2)
+        self.acel_y2_all = NewList(self.cant_acel2)
+        self.acel_z2_all = NewList(self.cant_acel2)
+        self.velocidad_all = NewList(self.cant_vel)
         self.n = 0
 
         self.pg_plot_acel1_x.clear()
