@@ -19,7 +19,7 @@ pg.setConfigOption('foreground', 'k')
 
 gui_class = uic.loadUiType("gui/main.ui")[0]
 
-DATOS = 8
+DATOS = 11
 
 class NewList():
 
@@ -47,6 +47,7 @@ class Gui(QMainWindow, gui_class):
         self.cant_acel1 = 100
         self.cant_acel2 = 100
         self.cant_vel = 400
+        self.cant_current = 400
 
 
         self.acel_x1_all = NewList(self.cant_acel1)
@@ -57,6 +58,7 @@ class Gui(QMainWindow, gui_class):
         self.acel_y2_all = NewList(self.cant_acel2)
         self.acel_z2_all = NewList(self.cant_acel2)
         self.velocidad_all = NewList(self.cant_vel)
+        self.corriente_all = NewList(self.cant_current)
 
         self.pg_window_acel1 = pg.GraphicsWindow()
         self.pg_window_acel2 = pg.GraphicsWindow()
@@ -78,6 +80,7 @@ class Gui(QMainWindow, gui_class):
 
         self.pg_gen_vel = self.pg_window_vel.addPlot()
         self.pg_plot_vel = self.pg_gen_vel.plot()
+        self.pg_plot_current = self.pg_gen_vel.plot()
 
         self.qt_aceleracion_layout.addWidget(self.pg_window_acel1)
         self.qt_velocidad_layout.addWidget(self.pg_window_vel)
@@ -112,21 +115,29 @@ class Gui(QMainWindow, gui_class):
         if not l_buffer == DATOS:
             return
         try:
+            v = 0
             splitted = buffer.split("*")
-            x1 = float(splitted[0])
-            y1 = float(splitted[1])
-            z1 = float(splitted[2])
+            if splitted[10]:
+                v = splitted[10]
+                
+            print(splitted[10])
+            print("...................")
+            x1 = float(splitted[1])
+            y1 = float(splitted[2])
+            z1 = float(splitted[3])
             
-            x2 = float(splitted[3])
-            y2 = float(splitted[4])
-            z2 = float(splitted[5])
+            x2 = float(splitted[4])
+            y2 = float(splitted[5])
+            z2 = float(splitted[6])
 
-            theta = float(splitted[6])
-            v = float(splitted[7])
+            theta = float(splitted[7])
+            #v = float(splitted[10])
+            current = float(splitted[9])
+            #v = current
             
             self.proxy.setRotation(theta)
         except:
-            print("Error convirtiendo a numero")
+            print("Error convirtiendo a numero", buffer)
             return
         self.n += 1
 
@@ -139,6 +150,7 @@ class Gui(QMainWindow, gui_class):
         self.acel_z2_all.append(z2)
 
         self.velocidad_all.append(v)
+        self.corriente_all.append(current)
 
         self.pg_plot_acel1_x.setData(
             self.acel_x1_all.l,
@@ -180,6 +192,12 @@ class Gui(QMainWindow, gui_class):
             self.velocidad_all.l,
             antialias=True,
             pen=pg.mkPen(color=(255, 100, 100))
+        )
+        
+        self.pg_plot_vel.setData(
+                self.corriente_all.l,
+                pen=pg.mkPen(color=(255, 0, 100)),
+                antialias=True
         )
 
         self.qt_velocidad_lcd.display(v)
@@ -259,9 +277,11 @@ class SerialThread(QThread):
         while True:
             try:
                 byte = self.ser.read(1).decode("utf8")
-                if byte == "\n":
+                if byte == ";":
                     buffer = buffer.strip()
                     self.signal.emit(buffer)
+                   # #print(buffer)
+                    #print(len(buffer.split("*")))
                     if len(buffer.split("*")) == DATOS:
                         self.guardar(buffer)
                     else:
